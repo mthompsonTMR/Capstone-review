@@ -1,0 +1,9 @@
+node_modules/
+.next/
+aws/
+amplify/
+.DS_Store
+.env
+*.log
+*.tar.gz
+

@@ -2,6 +2,7 @@ node_modules/
 .next/
 aws/
 amplify/
+!src/aws-exports.js  # ✅ Un-ignore this specific file
 .DS_Store
 .env
 *.log

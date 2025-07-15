@@ -6,72 +6,67 @@ import { transformFhirToSimplified } from "@/lib/fhir/transform";
 
 // ✅ GET /api/fhir/patient/[id]
 export async function GET(
-  _req: NextRequest,
+  req: NextRequest,
   context: { params: { id: string } }
 ) {
   try {
     await connectToDB();
+    const { id } = context.params;
 
-    const fhirId = context.params.id;
+    console.log(`[GET] Fetching patient with FHIR ID: ${id}`);
 
-    // Step 1: Check if already exists
-    const exists = await FhirPatient.findOne({ fhirId });
+    const exists = await FhirPatient.findOne({ fhirId: id });
     if (exists) {
-      return Response.json(
+      return NextResponse.json(
         { message: "Patient already exists", id: exists._id },
         { status: 200 }
       );
     }
 
-    // Step 2: Fetch from HAPI and transform
-    const rawFhirData = await getFhirPatientFromAPI(fhirId);
+    const rawFhirData = await getFhirPatientFromAPI(id);
     if (!rawFhirData) {
-      return Response.json(
+      return NextResponse.json(
         { error: "Patient not found in HAPI" },
         { status: 404 }
       );
     }
 
     const patientData = transformFhirToSimplified(rawFhirData);
-
-    // Step 3: Save transformed patient to Mongo
     const saved = await FhirPatient.create(patientData);
 
-    return Response.json(
+    return NextResponse.json(
       { message: "Patient saved to MongoDB", id: saved._id },
       { status: 201 }
     );
   } catch (error) {
-    console.error("GET /api/fhir/patient/[id] error:", error);
-    return Response.json({ error: "Server error" }, { status: 500 });
+    console.error("[GET] Server error:", error);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
 
 // ✅ DELETE /api/fhir/patient/[id]
 export async function DELETE(
-  _req: NextRequest,
+  req: NextRequest,
   context: { params: { id: string } }
 ) {
   try {
     await connectToDB();
+    const { id } = context.params;
 
-    const patientId = context.params.id;
-
-    const deleted = await FhirPatient.findByIdAndDelete(patientId);
-
+    const deleted = await FhirPatient.findByIdAndDelete(id);
     if (!deleted) {
-      return Response.json(
+      return NextResponse.json(
         { error: "Patient not found" },
         { status: 404 }
       );
     }
 
-    return Response.json(
-      { message: "Patient deleted successfully", id: patientId },
+    return NextResponse.json(
+      { message: "Patient deleted", id },
       { status: 200 }
     );
   } catch (error) {
-    console.error("DELETE /api/fhir/patient/[id] error:", error);
-    return Response.json({ error: "Server error" }, { status: 500 });
+    console.error("[DELETE] Server error:", error);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

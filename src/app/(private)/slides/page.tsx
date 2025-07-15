@@ -348,7 +348,7 @@ export default function SlidesPage() {
         </button>
       </div>
 
-      //new route for tissue map upload
+      {/*new route for tissue map upload*/}
       <div className="mb-6 border-t border-gray-500 pt-6">
         <h2 className="text-lg font-semibold mb-4">Tissue Metadata CSV Upload</h2>
         <input
@@ -468,7 +468,7 @@ export default function SlidesPage() {
         slide={selectedSlide}
       />
     )}
-  </div> // ← closes space-y-4 wrapper
-)} // ← closes ternary
+  </div> 
+)} {/*← closes ternary*/}
 </div>
   )}

@@ -1,7 +1,7 @@
 
 import mongoose from 'mongoose';
 
-let isConnected = false;
+const isConnected = false;
 
 export async function connect() {
   try{

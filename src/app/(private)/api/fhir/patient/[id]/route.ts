@@ -6,16 +6,14 @@ import { transformFhirToSimplified } from "@/lib/fhir/transform";
 
 // ✅ GET /api/fhir/patient/[id]
 export async function GET(
-  req: NextRequest,
-  context: { params: { id: string } }
+  _req: NextRequest,
+  { params }: { params: { id: string } }
 ) {
   try {
     await connectToDB();
-    const { id } = context.params;
+    const fhirId = params.id;
 
-    console.log(`[GET] Fetching patient with FHIR ID: ${id}`);
-
-    const exists = await FhirPatient.findOne({ fhirId: id });
+    const exists = await FhirPatient.findOne({ fhirId });
     if (exists) {
       return NextResponse.json(
         { message: "Patient already exists", id: exists._id },
@@ -23,7 +21,7 @@ export async function GET(
       );
     }
 
-    const rawFhirData = await getFhirPatientFromAPI(id);
+    const rawFhirData = await getFhirPatientFromAPI(fhirId);
     if (!rawFhirData) {
       return NextResponse.json(
         { error: "Patient not found in HAPI" },
@@ -39,34 +37,7 @@ export async function GET(
       { status: 201 }
     );
   } catch (error) {
-    console.error("[GET] Server error:", error);
-    return NextResponse.json({ error: "Server error" }, { status: 500 });
-  }
-}
-
-// ✅ DELETE /api/fhir/patient/[id]
-export async function DELETE(
-  req: NextRequest,
-  context: { params: { id: string } }
-) {
-  try {
-    await connectToDB();
-    const { id } = context.params;
-
-    const deleted = await FhirPatient.findByIdAndDelete(id);
-    if (!deleted) {
-      return NextResponse.json(
-        { error: "Patient not found" },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json(
-      { message: "Patient deleted", id },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error("[DELETE] Server error:", error);
+    console.error("[GET] Internal server error:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

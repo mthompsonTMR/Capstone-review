@@ -6,23 +6,9 @@ import axios from "axios";
 import { UploadResponse } from '@/types/index';
 import EditSlideModal from "@/models/components/EditSlideModel";
 import type { Slide } from "@/types/slide";
+import { MongoInvalidArgumentError } from "mongodb";
 
 
-
-
-
-// interface Slide {
-//   _id: string;
-//   pmSerialNumber: string;
-//   caseId?: string;
-//   runId?: string;
-//   slideId?: string;
-//   createdBy?: string;
-//   stain?: string;
-//   markerName?: string;
-//   processDate?: string;
-//   active?: boolean; // ✅ Add this line
-// }
 
 export default function SlidesPage() {
   const [slides, setSlides] = useState<Slide[]>([]);
@@ -134,18 +120,24 @@ export default function SlidesPage() {
     }
   };
 
-  const handleUpload = async () => {
-    try {
-      setLoading(true);
-      const res = await axios.post<{ message: string }>("/api/upload/url", { csvUrl });
-      alert(`✅ ${res.data.message}`);
-    } catch (err: any) {
-      console.error(err);
-      alert("❌ Upload failed.");
-    } finally {
-      setLoading(false);
+const handleUpload = async () => {
+  try {
+    setLoading(true);
+    const res = await axios.post<{ message: string }>("/api/upload/url", { csvUrl });
+    alert(`✅ ${res.data.message}`);
+  } catch (err: any) {
+    if (err.response?.data?.code === "CSV_SCHEMA_MISMATCH") {
+      alert("⚠️ CSV format is invalid. Please contact support with this error code: CSV_SCHEMA_MISMATCH");
+    } else {
+      alert("❌ Upload failed. Please try again later.");
     }
-  };
+    // 🔕 No console output in production for clean UX
+  } finally {
+    setLoading(false);
+  }
+};
+
+
 
   const handleSearch = async () => {
     try {
@@ -191,23 +183,27 @@ export default function SlidesPage() {
   };
 
   const handleFileUpload = async (file: File) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    setLoading(true);
-    try {
-      await axios.post("/api/upload/csv", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      alert("✅ File uploaded successfully!");
-    } catch (err) {
-      console.error("❌ File upload error:", err);
-      alert("❌ File upload failed.");
-    } finally {
-      setLoading(false);
-    }
-  };
+    console.log("📁 handleFileUpload called with:", file.name);
+
+  const formData = new FormData();
+  formData.append("file", file);
+  setLoading(true);
+  try {
+    const response = await axios.post("/api/upload/csv", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    console.log("✅ Upload response:", response);
+    alert("✅ File uploaded successfully!");
+  } catch (err) {
+    console.error("❌ File upload error:", err);
+    alert("❌ File upload failed.");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   const handleTissueUpload = async () => {
     if (!tissueFile || !tissueName || !stainId) {
@@ -255,8 +251,9 @@ export default function SlidesPage() {
       <div className="mb-6 flex items-center">
         <input
           type="file"
-          className="text-white"
+          accept=".csv"
           onChange={(e) => e.target.files && handleFileUpload(e.target.files[0])}
+          className="bg-white text-black border border-gray-300 px-3 py-2 rounded w-64 cursor-pointer"
         />
         <button className="ml-4 px-4 py-2 rounded bg-amber-600 hover:bg-amber-700 text-white">
           Upload File

@@ -29,18 +29,34 @@ export async function POST(req: NextRequest) {
 
     console.log("✅ Parsed data sample:", data.slice(0, 2));
 
+    const requiredFields = [
+  "Process date",
+  "PM serial number",
+  "Run ID",
+  "Slide ID",
+  "Slide created by",
+  "Stain",
+  "Marker name",
+  "Case ID",
+];
+
+const firstRow = data[0] as Record<string, string>;
+const missingFields = requiredFields.filter(field => !(field in firstRow));
+
+if (missingFields.length > 0) {
+  console.error("🛑 CSV missing fields:", missingFields);
+  return NextResponse.json(
+    {
+      error: "Invalid CSV format",
+      code: "CSV_SCHEMA_MISMATCH",
+    },
+    { status: 400 }
+  );
+}
+
     await connectToDB();
 
-    // const transformedSlides = data.map((row: any) => ({
-    //   processDate: new Date(row["Process date"]),
-    //   pmSerialNumber: row["PM serial number"],
-    //   runId: row["Run ID"],
-    //   slideId: row["Slide ID"],
-    //   createdBy: row["Slide created by"],
-    //   stain: row["Stain"],
-    //   markerName: row["Marker name"],
-    //   caseId: row["Case ID"],
-    // }));
+  
 const transformedSlides = data.map((row: any) => ({
   pmSerialNumber: row["Month"], // use Month as dummy serial number
   processDate: new Date("2024-01-01"), // fixed test date

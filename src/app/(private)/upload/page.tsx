@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 export default function UploadPage() {
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState("");
   const [rowCount, setRowCount] = useState<number | null>(null);
-
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  
   const handleUpload = async () => {
     if (!file) {
-      setMessage("Please select a CSV file.");
+      setMessage("❌ Please select a CSV file.");
       return;
     }
 
@@ -25,14 +26,20 @@ export default function UploadPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setMessage(data.error || "Upload failed.");
+        setMessage(`❌ Upload failed.\n${data.error || "Unknown error."}`);
+        setRowCount(null);
       } else {
         setMessage(data.message);
-        setRowCount(data.rows || null);
+        setRowCount(data.inserted || null);
       }
     } catch (err) {
       console.error(err);
-      setMessage("Something went wrong.");
+      setMessage("❌ Something went wrong. Please try again.");
+      setRowCount(null);
+    }
+    setFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value= "";
     }
   };
 
@@ -45,7 +52,6 @@ export default function UploadPage() {
         accept=".csv"
         onChange={(e) => setFile(e.target.files?.[0] || null)}
         className="mb-4 bg-white text-black border border-gray-400 rounded px-2 py-1"
-
       />
 
       <button
@@ -56,9 +62,13 @@ export default function UploadPage() {
       </button>
 
       {message && (
-        <p className="mt-4 text-lg">
+        <pre
+          className={`mt-4 text-lg whitespace-pre-wrap ${
+            message.includes("❌") ? "text-red-400" : "text-green-400"
+          }`}
+        >
           {message} {rowCount !== null && `(${rowCount} rows)`}
-        </p>
+        </pre>
       )}
     </div>
   );

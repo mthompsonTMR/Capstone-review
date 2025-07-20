@@ -58,15 +58,16 @@ if (missingFields.length > 0) {
 
   
 const transformedSlides = data.map((row: any) => ({
-  pmSerialNumber: row["Month"], // use Month as dummy serial number
-  processDate: new Date("2024-01-01"), // fixed test date
-  runId: row[' "1958"'],
-  slideId: row[' "1959"'],
-  createdBy: "tester",
-  stain: "N/A",
-  markerName: "demo",
-  caseId: row[' "1960"']
+  pmSerialNumber: row["PM serial number"],
+  processDate: new Date(row["Process date"]),
+  runId: row["Run ID"],
+  slideId: row["Slide ID"],
+  createdBy: row["Slide created by"],
+  stain: row["Stain"],
+  markerName: row["Marker name"],
+  caseId: row["Case ID"],
 }));
+
 
     await Slide.insertMany(transformedSlides);
 

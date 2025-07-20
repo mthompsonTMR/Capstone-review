@@ -8,7 +8,7 @@ const navItems = [
   { href: '/slides', label: 'Slides' },
   { href: '/upload', label: 'Upload' },
   { href: '/fhir-gateway', label: 'FHIR Gateway' },
-  { href: '/tissue', label: 'Tissue' },
+  { href: '/tissue/dashboard', label: 'Tissue Dashboard' },
   { href: '/blog', label: 'Blog' }, // ← Add this
   { href: '/contact', label: 'Contact' }, 
 ];

@@ -1,6 +1,7 @@
 // ✅ Root layout with correct export, globals, and metadata
 import type { Metadata } from "next";
 import "./globals.css";
+import { AppProvider } from "@/context/AppContext"; // ✅ Add this line
 
 export const metadata: Metadata = {
   title: "MedData Dashboard",
@@ -14,7 +15,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AppProvider> {/* ✅ Wrap entire app */}
+          {children}
+        </AppProvider>
+      </body>
     </html>
   );
 }

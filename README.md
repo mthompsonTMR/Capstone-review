@@ -10,6 +10,33 @@ git init
 
 This project is the final capstone for my software engineering training. It integrates a full-stack ETL dashboard and FHIR gateway to process, store, and visualize medical data.
 
+✅ Feature Summary (Capstone Requirements)
+This project implements a full-stack medical data dashboard using Next.js App Router, MongoDB, and Context API. The following core requirements were addressed:
+
+✅ Structured folder organization using App Router with (auth) and (private) segments
+
+✅ RESTful CRUD operations for tissue data with replace functionality
+
+✅ Context API for global state management (e.g., uploadStatus) with centralized control (currently tested and under further development )
+
+✅ Authentication scaffolding using route-based access and isAuthenticated state
+
+✅ React-based UI components including dashboard, modals, and search/filter inputs
+
+✅ Integration with backend APIs for dynamic data fetching and updates
+
+✅ Styled using Tailwind CSS for modern and responsive design
+
+✅ Manual validation and error testing completed; automated tests planned
+
+✅ Live deployment on Render with rollback and production-ready structure https://capstone-review.onrender.com/
+
+✅ Documentation maintained via in-project journal and supporting notes
+
+This submission demonstrates an architectural understanding of scalable design, component-based UI, centralized state logic, and real-world debugging and deployment workflows.
+
+
+
 ---
 
 ## 🔧 Technologies Used

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { errorMonitor } from "events";
 
 
 // ✅ Removed unused imports: axios, UNDERSCORE_NOT_FOUND_ROUTE
@@ -35,19 +36,33 @@ export default function SignupPage() {
         // update to code from video
 
 const onSignup = async () => {
+  console.log("Submitting user:", user);
+
   try {
     setLoading(true);
-    const response = await axios.post("/api/users/signup", user);
+    const response = await axios.post("/api/auth/signup", user);
     console.log("Signup success", response.data);
     toast.success("Signup successful!");
     router.push("/login");
-  } catch (error: any) {
-    console.error("Signup Failed", error.message);
-    toast.error(error.message || "Signup failed");
-  } finally {
+
+
+
+} catch (error: any) {
+  // Optional: comment out or remove for production
+  //console.error("Signup failed:", error?.response?.data?.message || error.message);
+
+  // Show friendly error to the user
+  const backendMessage =
+    error?.response?.data?.message ||
+    "Signup failed. Please try again.";
+
+  toast.error(backendMessage);
+
+} finally {
     setLoading(false);
   }
 };
+
 
 //end update here
 

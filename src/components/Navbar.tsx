@@ -1,3 +1,7 @@
+// ✅ Shared Navbar component (used in layout.tsx)
+// 💬 "Provides consistent navigation across the app — highlights active page with underline."
+
+
 'use client';
 
 import Link from 'next/link';

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "engines": {
-    "node": "20.x"
+    "node": ">=20.0.0x"
   },
   "scripts": {
     "dev": "next dev --turbopack",
@@ -33,6 +33,8 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/bcrypt": "^6.0.0",
+    "@types/bcryptjs": "^2.4.6",
     "@types/csv-parse": "^1.1.12",
     "@types/formidable": "^3.4.5",
     "@types/json2csv": "^5.0.7",
